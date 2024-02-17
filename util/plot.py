@@ -13,6 +13,13 @@ from matplotlib.gridspec import GridSpec
 fontManager.addfont('TaipeiSansTCBeta-Regular.ttf')
 mpl.rc('font', family='Taipei Sans TC Beta')
 
+def update_colormap(name = 'Dark2'):
+    global COLORMAP
+    COLORMAP = mpl.colormaps[name].colors
+    plt.rcParams['axes.prop_cycle'] = plt.cycler(color=COLORMAP)
+
+update_colormap(name = 'Dark2')
+
 def home_one(start_time, end_time):
 
     tmp_df = data.get_final_df(start_time, end_time)
@@ -122,7 +129,7 @@ def home_three(start_time, end_time):
     ax = [fig.add_subplot(gs[0, 0])]
 
     ax_i = 0
-    ax[ax_i] = (tmp_df/tmp_df.sum()).T.plot(y=['god', 'villager', 'wolf'], kind='barh', color = ['#81C0C0', '#CDCD9A', '#C48888'], stacked=True, ax=ax[ax_i])
+    ax[ax_i] = (tmp_df/tmp_df.sum()).T.plot(y=['god', 'villager', 'wolf'], kind='barh', color = [COLORMAP[0], COLORMAP[1], COLORMAP[2]], stacked=True, ax=ax[ax_i])
     ax[ax_i].spines['top'].set_visible(False)
     ax[ax_i].spines['right'].set_visible(False)
     ax[ax_i].patch.set_alpha(0)
@@ -169,7 +176,7 @@ def personal_one(name, start_time, end_time):
     df = data.df
     _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)].copy()
 
-    fig = plt.figure(layout="constrained", figsize=(10, 5))
+    fig = plt.figure(layout="constrained")
     fig.patch.set_alpha(0.3)
     gs = GridSpec(1, 2, figure=fig)
     ax = [
@@ -204,7 +211,7 @@ def personal_one(name, start_time, end_time):
     return fig
 
 def personal_two(name, start_time, end_time):
-    fig = plt.figure(layout="constrained", figsize=(10, 5))
+    fig = plt.figure(layout="constrained")
     fig.patch.set_alpha(0.3)
     gs = GridSpec(2, 3, figure=fig)
     ax = [
