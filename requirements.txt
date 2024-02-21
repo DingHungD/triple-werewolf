@@ -5,4 +5,4 @@ pandas
 pydeck
 streamlit
 matplotlib 
-
+streamlit_echarts

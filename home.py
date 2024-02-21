@@ -1,8 +1,8 @@
 import streamlit as st
 from datetime import datetime, timedelta
-from util import plot, data
+from util import plot, data, _plot
 import base64
-
+from streamlit_echarts import st_echarts
 # 改style要在改font之前
 # plt.style.use('seaborn')
 sideb = st.sidebar
@@ -71,9 +71,16 @@ end_time = st.date_input(
 ).strftime("%Y/%m/%d/")
 
 
-st.pyplot(plot.home_one(start_time, end_time))
+# st.pyplot(plot.home_one(start_time, end_time))
 
-st.pyplot(plot.home_two(start_time, end_time))
+# st.pyplot(plot.home_two(start_time, end_time))
 
-st.pyplot(plot.home_three(start_time, end_time))
+# st.pyplot(plot.home_three(start_time, end_time))
+
+
+
+st_echarts(options=_plot.home_one(start_time, end_time), height=800)
+st_echarts(options=_plot.home_two(start_time, end_time), height=400)
+st_echarts(options=_plot.home_three(start_time, end_time))
+st_echarts(options=_plot.home_four(start_time, end_time), height=400)
 
