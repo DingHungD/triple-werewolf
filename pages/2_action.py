@@ -24,16 +24,16 @@ st.markdown(
       """,
       unsafe_allow_html=True,
       )
-# st.markdown(
-#   """
+st.markdown(
+  """
 #     <style>
-#     div[data-testid="stSelectbox"] div{
-#     color: gray;
-#     }
+# #     div[data-testid="stSelectbox"] div{
+# #     color: gray;
+# #     }
 
-#     label[data-testid="stWidgetLabel"] label{
-#     color: gray;
-#     }
+# #     label[data-testid="stWidgetLabel"] label{
+# #     color: gray;
+# #     }
 
 #     div[data-testid="stDateInput"] div {
 #     color: gray;
@@ -47,10 +47,10 @@ st.markdown(
 #     div[data-baseweb="calendar"] button {
 #         color:gray
 #         };
-#         </style>
-# """,
-#     unsafe_allow_html=True,
-# )
+        </style>
+""",
+    unsafe_allow_html=True,
+)
 
 action = st.selectbox(
         'action',
