@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-from util import data, plot, _plot
+from util import data, plot, _plot, constant
 import base64
 from streamlit_echarts import st_echarts
 
@@ -56,25 +56,28 @@ name = st.selectbox(
         'name',
         data.df.name.unique()
     )
-start_time = st.date_input(
+
+STARTTIME = st.date_input(
     'start time',
-    datetime.strptime(data.df.date.min(), '%Y/%m/%d').date()-timedelta(days = 1)
-).strftime("%Y/%m/%d/")
-end_time = st.date_input(
+    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()-timedelta(days = 1)
+).strftime("%Y/%m/%d")
+
+ENDTIME = st.date_input(
     'end time',
-    datetime.strptime(data.df.date.max(), '%Y/%m/%d').date()
-).strftime("%Y/%m/%d/")
+    datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
+).strftime("%Y/%m/%d")
 
-st.pyplot(plot.personal_one(name, start_time, end_time))
+if constant.CHARTMODE=='pyplot':
+    st.pyplot(plot.personal_one(name, STARTTIME, ENDTIME))
 
-st.pyplot(plot.personal_two(name, start_time, end_time))
+    st.pyplot(plot.personal_two(name, STARTTIME, ENDTIME))
+elif constant.CHARTMODE=='echart':
 
-
-# st_echarts(options=_plot.personal_1(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_2(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_3(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_4(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_5(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_6(name, start_time, end_time), height=400)
-# st_echarts(options=_plot.personal_7(name, start_time, end_time), height=400)
+    st_echarts(options=_plot.personal_1(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_2(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_3(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_4(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_5(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_6(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_7(name, constant.STARTTIME, constant.ENDTIME), height=400)
 

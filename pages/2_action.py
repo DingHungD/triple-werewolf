@@ -1,7 +1,7 @@
 import streamlit as st
 
 from datetime import datetime, timedelta
-from util import data, plot, _plot
+from util import data, plot, _plot, constant
 import base64
 from streamlit_echarts import st_echarts
 
@@ -51,22 +51,25 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
-
 action = st.selectbox(
         'action',
         data.process_df.action.unique()
     )
-start_time = st.date_input(
+STARTTIME = st.date_input(
     'start time',
-    datetime.strptime(data.df.date.min(), '%Y/%m/%d').date()-timedelta(days = 1)
-).strftime("%Y/%m/%d/")
-end_time = st.date_input(
+    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()-timedelta(days = 1)
+).strftime("%Y/%m/%d")
+
+
+ENDTIME = st.date_input(
     'end time',
-    datetime.strptime(data.df.date.max(), '%Y/%m/%d').date()
-).strftime("%Y/%m/%d/")
-
-# st.pyplot(plot.action_one(action, start_time, end_time))
+    datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
+).strftime("%Y/%m/%d")
 
 
-st_echarts(options=_plot.action_1(action, start_time, end_time), height=800)
+if constant.CHARTMODE=='pyplot':
+    st.pyplot(plot.action_one(action, STARTTIME, ENDTIME))
+
+elif constant.CHARTMODE=='echart':
+    st_echarts(options=_plot.action_1(action, STARTTIME, ENDTIME), height=800)
 
