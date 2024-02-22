@@ -64,9 +64,16 @@ st.markdown(
       """,
       unsafe_allow_html=True,
       )
-# st.markdown(
-#   """
-#     <style>
+st.markdown(
+  """
+    <style>
+    div[data-testid="stSelectbox"] div{
+    color: gray;
+    }
+
+    label[data-testid="stWidgetLabel"] label{
+    color: gray;
+    }
 #     div[data-testid="stMarkdownContainer"] div{
 #     color: gray;
 #     }
@@ -82,10 +89,10 @@ st.markdown(
 #     div[data-baseweb="calendar"] button {
 #         color:gray
 #         };
-#         </style>
-# """,
-#     unsafe_allow_html=True,
-# )
+        </style>
+""",
+    unsafe_allow_html=True,
+)
 
 
 
