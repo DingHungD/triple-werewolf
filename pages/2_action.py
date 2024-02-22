@@ -24,52 +24,57 @@ st.markdown(
       """,
       unsafe_allow_html=True,
       )
-st.markdown(
-  """
-    <style>
-    div[data-testid="stSelectbox"] div{
-    color: gray;
-    }
+# st.markdown(
+#   """
+#     <style>
+#     div[data-testid="stSelectbox"] div{
+#     color: gray;
+#     }
 
-    label[data-testid="stWidgetLabel"] label{
-    color: gray;
-    }
+#     label[data-testid="stWidgetLabel"] label{
+#     color: gray;
+#     }
 
-    div[data-testid="stDateInput"] div {
-    color: gray;
-    }
-    div[data-testid="stDateInput"] input{
-    color: gray;
-    }
-    div[role="presentation"] div{
-    color: gray;
-    }
-    div[data-baseweb="calendar"] button {
-        color:gray
-        };
-        </style>
-""",
-    unsafe_allow_html=True,
-)
+#     div[data-testid="stDateInput"] div {
+#     color: gray;
+#     }
+#     div[data-testid="stDateInput"] input{
+#     color: gray;
+#     }
+#     div[role="presentation"] div{
+#     color: gray;
+#     }
+#     div[data-baseweb="calendar"] button {
+#         color:gray
+#         };
+#         </style>
+# """,
+#     unsafe_allow_html=True,
+# )
+
 action = st.selectbox(
         'action',
         data.process_df.action.unique()
     )
-STARTTIME = st.date_input(
+constant.STARTTIME = st.sidebar.date_input(
     'start time',
-    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()-timedelta(days = 1)
+    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
-
-ENDTIME = st.date_input(
+constant.ENDTIME = st.sidebar.date_input(
     'end time',
     datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
+constant.CHARTMODE = st.sidebar.selectbox(
+   "Select chart mode",
+   ('pyplot', 'echart'),
+   index=constant.CHARTMODEINDEX)
+constant.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[constant.CHARTMODE]
 
 
 if constant.CHARTMODE=='pyplot':
-    st.pyplot(plot.action_one(action, STARTTIME, ENDTIME))
+    st.pyplot(plot.action_one(action, constant.STARTTIME, constant.ENDTIME))
 
 elif constant.CHARTMODE=='echart':
-    st_echarts(options=_plot.action_1(action, STARTTIME, ENDTIME), height=800)
+    st_echarts(options=_plot.action_1(action, constant.STARTTIME, constant.ENDTIME), height=800)
 

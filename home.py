@@ -13,12 +13,14 @@ st.set_page_config(page_title='首頁',
 
 side_bg = './img/S__75292772-removebg-preview.png'
 
-STARTTIME = st.date_input(
-    'start time',
-    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()-timedelta(days = 1)
-).strftime("%Y/%m/%d")
 
-ENDTIME = st.date_input(
+
+constant.STARTTIME = st.sidebar.date_input(
+    'start time',
+    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()
+    ).strftime("%Y/%m/%d")
+
+constant.ENDTIME = st.sidebar.date_input(
     'end time',
     datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
@@ -29,12 +31,16 @@ constant.CHARTMODE = st.sidebar.selectbox(
    "Select chart mode",
    ('pyplot', 'echart'),
    index=constant.CHARTMODEINDEX)
-
 constant.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[constant.CHARTMODE]
+
+PLOTCOLOR_lst = ('Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2','Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b','tab20c')
 constant.PLOTCOLOR = st.sidebar.selectbox(
    "Select color",
-   ('Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2','Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b','tab20c'),
-   index=4)
+   PLOTCOLOR_lst,
+   index=constant.PLOTCOLORINDEX)
+
+
+constant.PLOTCOLORINDEX = {v:i for i, v in enumerate(PLOTCOLOR_lst)}[constant.PLOTCOLOR]
 
 check1 = sideb.button("reload data")
 if check1:
@@ -58,41 +64,44 @@ st.markdown(
       """,
       unsafe_allow_html=True,
       )
-st.markdown(
-  """
-    <style>
-    div[data-testid="stMarkdownContainer"] div{
-    color: gray;
-    }
-    div[data-testid="stDateInput"] div {
-    color: gray;
-    }
-    div[data-testid="stDateInput"] input{
-    color: gray;
-    }
-    div[role="presentation"] div{
-    color: gray;
-    }
-    div[data-baseweb="calendar"] button {
-        color:gray
-        };
-        </style>
-""",
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#   """
+#     <style>
+#     div[data-testid="stMarkdownContainer"] div{
+#     color: gray;
+#     }
+#     div[data-testid="stDateInput"] div {
+#     color: gray;
+#     }
+#     div[data-testid="stDateInput"] input{
+#     color: gray;
+#     }
+#     div[role="presentation"] div{
+#     color: gray;
+#     }
+#     div[data-baseweb="calendar"] button {
+#         color:gray
+#         };
+#         </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 
 
 
 if constant.CHARTMODE=='pyplot':
-    st.pyplot(plot.home_one(STARTTIME, ENDTIME))
-    st.pyplot(plot.home_two(STARTTIME, ENDTIME))
-    st.pyplot(plot.home_three(STARTTIME, ENDTIME))
+    st.pyplot(plot.home_one(constant.STARTTIME, constant.ENDTIME))
+    st.pyplot(plot.home_two(constant.STARTTIME, constant.ENDTIME))
+    st.pyplot(plot.home_three(constant.STARTTIME, constant.ENDTIME))
 
 elif constant.CHARTMODE=='echart':
 
-    st_echarts(options=_plot.home_1(STARTTIME, ENDTIME), height=800)
-    st_echarts(options=_plot.home_2(STARTTIME, ENDTIME), height=400)
-    st_echarts(options=_plot.home_3(STARTTIME, ENDTIME))
-    st_echarts(options=_plot.home_4(STARTTIME, ENDTIME))
-    st_echarts(options=_plot.home_5(STARTTIME, ENDTIME), height=400)
+    st_echarts(options=_plot.home_1(constant.STARTTIME, constant.ENDTIME), height=800)
+    st_echarts(options=_plot.home_2(constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.home_3(constant.STARTTIME, constant.ENDTIME))
+    st_echarts(options=_plot.home_4(constant.STARTTIME, constant.ENDTIME))
+    st_echarts(options=_plot.home_5(constant.STARTTIME, constant.ENDTIME), height=400)
+
+
+

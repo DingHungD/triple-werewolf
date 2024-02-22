@@ -24,53 +24,60 @@ st.markdown(
       """,
       unsafe_allow_html=True,
       )
-st.markdown(
-  """
-    <style>
-    div[data-testid="stSelectbox"] div{
-    color: gray;
-    }
+# st.markdown(
+#   """
+#     <style>
+#     div[data-testid="stSelectbox"] div{
+#     color: gray;
+#     }
 
-    label[data-testid="stWidgetLabel"] label{
-    color: gray;
-    }
+#     label[data-testid="stWidgetLabel"] label{
+#     color: gray;
+#     }
 
-    div[data-testid="stDateInput"] div {
-    color: gray;
-    }
-    div[data-testid="stDateInput"] input{
-    color: gray;
-    }
-    div[role="presentation"] div{
-    color: gray;
-    }
-    div[data-baseweb="calendar"] button {
-        color:gray
-        };
-        </style>
-""",
-    unsafe_allow_html=True,
-)
+#     div[data-testid="stDateInput"] div {
+#     color: gray;
+#     }
+#     div[data-testid="stDateInput"] input{
+#     color: gray;
+#     }
+#     div[role="presentation"] div{
+#     color: gray;
+#     }
+#     div[data-baseweb="calendar"] button {
+#         color:gray
+#         };
+#         </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 name = st.selectbox(
         'name',
         data.df.name.unique()
     )
 
-STARTTIME = st.date_input(
+constant.STARTTIME = st.sidebar.date_input(
     'start time',
-    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()-timedelta(days = 1)
-).strftime("%Y/%m/%d")
+    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()
+    
+    ).strftime("%Y/%m/%d")
 
-ENDTIME = st.date_input(
+constant.ENDTIME = st.sidebar.date_input(
     'end time',
     datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
-if constant.CHARTMODE=='pyplot':
-    st.pyplot(plot.personal_one(name, STARTTIME, ENDTIME))
+constant.CHARTMODE = st.sidebar.selectbox(
+   "Select chart mode",
+   ('pyplot', 'echart'),
+   index=constant.CHARTMODEINDEX)
+constant.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[constant.CHARTMODE]
 
-    st.pyplot(plot.personal_two(name, STARTTIME, ENDTIME))
+if constant.CHARTMODE=='pyplot':
+    st.pyplot(plot.personal_one(name, constant.STARTTIME, constant.ENDTIME))
+
+    st.pyplot(plot.personal_two(name, constant.STARTTIME, constant.ENDTIME))
 elif constant.CHARTMODE=='echart':
 
     st_echarts(options=_plot.personal_1(name, constant.STARTTIME, constant.ENDTIME), height=400)
