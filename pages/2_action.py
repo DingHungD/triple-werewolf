@@ -26,14 +26,14 @@ st.markdown(
       )
 st.markdown(
   """
-#     <style>
-# #     div[data-testid="stSelectbox"] div{
-# #     color: gray;
-# #     }
+    <style>
+    div[data-testid="stSelectbox"] div{
+    color: gray;
+    }
 
-# #     label[data-testid="stWidgetLabel"] label{
-# #     color: gray;
-# #     }
+    label[data-testid="stWidgetLabel"] label{
+    color: gray;
+    }
 
 #     div[data-testid="stDateInput"] div {
 #     color: gray;
