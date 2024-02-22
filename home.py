@@ -5,6 +5,7 @@ import base64
 from streamlit_echarts import st_echarts
 # 改style要在改font之前
 # plt.style.use('seaborn')
+
 sideb = st.sidebar
 
 st.set_page_config(page_title='首頁',
@@ -79,8 +80,8 @@ end_time = st.date_input(
 
 
 
-st_echarts(options=_plot.home_one(start_time, end_time), height=800)
-st_echarts(options=_plot.home_two(start_time, end_time), height=400)
-st_echarts(options=_plot.home_three(start_time, end_time))
-st_echarts(options=_plot.home_four(start_time, end_time), height=400)
-
+st_echarts(options=_plot.home_1(start_time, end_time), height=800)
+st_echarts(options=_plot.home_2(start_time, end_time), height=400)
+st_echarts(options=_plot.home_3(start_time, end_time))
+st_echarts(options=_plot.home_4(start_time, end_time))
+st_echarts(options=_plot.home_5(start_time, end_time), height=400)

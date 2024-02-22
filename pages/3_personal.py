@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-from util import data, plot
+from util import data, plot, _plot
 import base64
+from streamlit_echarts import st_echarts
 
 st.set_page_config(page_title='首頁',
                    page_icon="🐺")
@@ -67,3 +68,13 @@ end_time = st.date_input(
 st.pyplot(plot.personal_one(name, start_time, end_time))
 
 st.pyplot(plot.personal_two(name, start_time, end_time))
+
+
+# st_echarts(options=_plot.personal_1(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_2(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_3(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_4(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_5(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_6(name, start_time, end_time), height=400)
+# st_echarts(options=_plot.personal_7(name, start_time, end_time), height=400)
+

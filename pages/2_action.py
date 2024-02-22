@@ -1,9 +1,9 @@
 import streamlit as st
 
 from datetime import datetime, timedelta
-from util import data, plot
+from util import data, plot, _plot
 import base64
-
+from streamlit_echarts import st_echarts
 
 side_bg = './img/S__75292772-removebg-preview.png'
 st.set_page_config(page_title='動作',
@@ -30,11 +30,11 @@ st.markdown(
     div[data-testid="stSelectbox"] div{
     color: gray;
     }
-    
+
     label[data-testid="stWidgetLabel"] label{
     color: gray;
     }
-    
+
     div[data-testid="stDateInput"] div {
     color: gray;
     }
@@ -65,4 +65,8 @@ end_time = st.date_input(
     datetime.strptime(data.df.date.max(), '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d/")
 
-st.pyplot(plot.action_one(action, start_time, end_time))
+# st.pyplot(plot.action_one(action, start_time, end_time))
+
+
+st_echarts(options=_plot.action_1(action, start_time, end_time), height=800)
+
