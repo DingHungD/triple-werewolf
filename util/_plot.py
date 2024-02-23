@@ -1,8 +1,9 @@
 import pandas as pd
 from util import data
 
-def home_1(start_time, end_time):
+def home_1(start_time, end_time, session_number = 0):
     tmp_df = data.get_final_df(start_time, end_time)
+    tmp_df = tmp_df[tmp_df.session_number>session_number]
     tmp_df = tmp_df.sort_values('win', ascending=True)
     return {
         "tooltip": {
@@ -359,9 +360,9 @@ def home_5(start_time, end_time):
 }
 
 
-def action_1(action, start_time, end_time):
+def action_1(action, start_time, end_time, session_number):
   tmp_df = data.get_action_df(action, start_time, end_time)
-  include_sid = data.session_df[(data.session_df.date>=start_time)&(data.session_df.date<=end_time)].sid.values
+  tmp_df = tmp_df[tmp_df.session_number>session_number]
   return {
 
         "tooltip": {
@@ -375,7 +376,7 @@ def action_1(action, start_time, end_time):
           "left": "12%",
           "top": "3%",
           "style": {
-            "text": '被%s王'%action,
+            "text": '%s王'%action if action == '自爆' else '被%s王'%action,
             "fontSize": 25,
             "fontWeight": 'bold',
             "lineDash": [0, 200],
@@ -387,7 +388,7 @@ def action_1(action, start_time, end_time):
           "left": "62%",
           "top": "3%",
           "style": {
-            "text": '參與場次&被%s次數'%action,
+            "text": '參與場次&%s次數'%action if action == '自爆' else '參與場次&被%s次數'%action,
             "fontSize": 25,
             "fontWeight": 'bold',
             "lineDash": [0, 200],
@@ -438,13 +439,18 @@ def action_1(action, start_time, end_time):
             },
             {"data": [int(i) for i in tmp_df.number.values],
             #  "showBackground": True,
-             "name":"被%s次數"%action,
+             "name":'%s王'%action if action == '自爆' else '被%s王'%action,
              "type": "bar",
              "xAxisIndex": 1,
              "yAxisIndex": 1,
              "itemStyle": {"color": '#9A3C45'},
             }
         ],
+        "legend": {
+          "show": True,
+          "data": ['參與場次', '%s王'%action if action == '自爆' else '被%s王'%action],
+          "bottom": -20,
+  }
     }
 
 
@@ -674,7 +680,7 @@ def personal_5(name, start_time, end_time):
       tmp_df['ratio'] = tmp_df.numer/tmp_df.total_round
       return {
         "title": {
-            "text": '殺狼率',
+            "text": '殺神率',
             "left": 'center'},
 
         "tooltip": {
@@ -698,7 +704,7 @@ def personal_5(name, start_time, end_time):
         "series": [
             {"data": list(tmp_df.ratio.values),
              "itemStyle": {"color":'#00CCCC'},
-             "name":"殺狼率",
+             "name":"殺神率",
              "type": "bar",
             }
         ],

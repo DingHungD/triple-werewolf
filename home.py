@@ -1,12 +1,13 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime
 from util import plot, data, _plot, constant
 import base64
 from streamlit_echarts import st_echarts
 # 改style要在改font之前
 # plt.style.use('seaborn')
 
-sideb = st.sidebar
+constant.init_session_state()
+
 
 st.set_page_config(page_title='首頁',
                    page_icon="🐺")
@@ -14,39 +15,44 @@ st.set_page_config(page_title='首頁',
 side_bg = './img/S__75292772-removebg-preview.png'
 
 
-
-constant.STARTTIME = st.sidebar.date_input(
+## sidebar
+st.session_state.STARTTIME = st.sidebar.date_input(
     'start time',
-    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()
+    datetime.strptime(st.session_state.STARTTIME, '%Y/%m/%d').date()
     ).strftime("%Y/%m/%d")
 
-constant.ENDTIME = st.sidebar.date_input(
+st.session_state.ENDTIME = st.sidebar.date_input(
     'end time',
-    datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
+    datetime.strptime(st.session_state.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
 
-
-constant.CHARTMODE = st.sidebar.selectbox(
+st.session_state.CHARTMODE = st.sidebar.selectbox(
    "Select chart mode",
    ('pyplot', 'echart'),
-   index=constant.CHARTMODEINDEX)
-constant.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[constant.CHARTMODE]
+   index=st.session_state.CHARTMODEINDEX)
+st.session_state.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[st.session_state.CHARTMODE]
+
+
 
 PLOTCOLOR_lst = ('Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2','Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b','tab20c')
-constant.PLOTCOLOR = st.sidebar.selectbox(
-   "Select color",
+
+
+st.session_state.PLOTCOLOR = st.sidebar.selectbox(
+   "Select chart mode",
    PLOTCOLOR_lst,
-   index=constant.PLOTCOLORINDEX)
+   index=st.session_state.PLOTCOLORINDEX)
+st.session_state.PLOTCOLORINDEX = {v:i for i, v in enumerate(PLOTCOLOR_lst)}[st.session_state.PLOTCOLOR]
 
-
-constant.PLOTCOLORINDEX = {v:i for i, v in enumerate(PLOTCOLOR_lst)}[constant.PLOTCOLOR]
-
+sideb = st.sidebar
 check1 = sideb.button("reload data")
 if check1:
     data.reload()
 
-plot.update_colormap(name = constant.PLOTCOLOR)
+# plot.update_colormap(name = constant.PLOTCOLOR)
+
+
+
 
 st.markdown(
       f"""
@@ -74,9 +80,12 @@ st.markdown(
     label[data-testid="stWidgetLabel"] label{
     color: gray;
     }
-#     div[data-testid="stMarkdownContainer"] div{
-#     color: gray;
-#     }
+    div[data-testid="stMarkdownContainer"] div{
+    color: gray;
+    }
+    div[data-testid="stSlider"] div{
+    color: gray;
+    }
 #     div[data-testid="stDateInput"] div {
 #     color: gray;
 #     }
@@ -93,22 +102,25 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+# body
+session_number = st.slider('玩家場數過濾', 0,
+                           data.get_final_df(st.session_state.STARTTIME,
+                                             st.session_state.ENDTIME).session_number.max(),0)
 
 
+plot.update_colormap(name = st.session_state.PLOTCOLOR)
+if st.session_state.CHARTMODE=='pyplot':
+    st.pyplot(plot.home_one(st.session_state.STARTTIME, st.session_state.ENDTIME, session_number))
+    st.pyplot(plot.home_two(st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st.pyplot(plot.home_three(st.session_state.STARTTIME, st.session_state.ENDTIME))
 
+elif st.session_state.CHARTMODE=='echart':
 
-if constant.CHARTMODE=='pyplot':
-    st.pyplot(plot.home_one(constant.STARTTIME, constant.ENDTIME))
-    st.pyplot(plot.home_two(constant.STARTTIME, constant.ENDTIME))
-    st.pyplot(plot.home_three(constant.STARTTIME, constant.ENDTIME))
-
-elif constant.CHARTMODE=='echart':
-
-    st_echarts(options=_plot.home_1(constant.STARTTIME, constant.ENDTIME), height=800)
-    st_echarts(options=_plot.home_2(constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.home_3(constant.STARTTIME, constant.ENDTIME))
-    st_echarts(options=_plot.home_4(constant.STARTTIME, constant.ENDTIME))
-    st_echarts(options=_plot.home_5(constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.home_1(st.session_state.STARTTIME, st.session_state.ENDTIME, session_number), height=800)
+    st_echarts(options=_plot.home_2(st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.home_3(st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st_echarts(options=_plot.home_4(st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st_echarts(options=_plot.home_5(st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
 
 
 

@@ -9,6 +9,8 @@ st.set_page_config(page_title='首頁',
                    page_icon="🐺")
 side_bg = './img/S__75292772-removebg-preview.png'
 
+constant.init_session_state()
+
 st.markdown(
       f"""
       <style>
@@ -57,34 +59,34 @@ name = st.selectbox(
         data.df.name.unique()
     )
 
-constant.STARTTIME = st.sidebar.date_input(
+st.session_state.STARTTIME = st.sidebar.date_input(
     'start time',
-    datetime.strptime(constant.STARTTIME, '%Y/%m/%d').date()
-    
+    datetime.strptime(st.session_state.STARTTIME, '%Y/%m/%d').date()
+
     ).strftime("%Y/%m/%d")
 
-constant.ENDTIME = st.sidebar.date_input(
+st.session_state.ENDTIME = st.sidebar.date_input(
     'end time',
-    datetime.strptime(constant.ENDTIME, '%Y/%m/%d').date()
+    datetime.strptime(st.session_state.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
-constant.CHARTMODE = st.sidebar.selectbox(
+st.session_state.CHARTMODE = st.sidebar.selectbox(
    "Select chart mode",
    ('pyplot', 'echart'),
-   index=constant.CHARTMODEINDEX)
-constant.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[constant.CHARTMODE]
+   index=st.session_state.CHARTMODEINDEX)
+st.session_state.CHARTMODEINDEX = {'pyplot':0, 'echart':1}[st.session_state.CHARTMODE]
 
-if constant.CHARTMODE=='pyplot':
-    st.pyplot(plot.personal_one(name, constant.STARTTIME, constant.ENDTIME))
+if st.session_state.CHARTMODE=='pyplot':
+    st.pyplot(plot.personal_one(name, st.session_state.STARTTIME, st.session_state.ENDTIME))
 
-    st.pyplot(plot.personal_two(name, constant.STARTTIME, constant.ENDTIME))
-elif constant.CHARTMODE=='echart':
+    st.pyplot(plot.personal_two(name, st.session_state.STARTTIME, st.session_state.ENDTIME))
+elif st.session_state.CHARTMODE=='echart':
 
-    st_echarts(options=_plot.personal_1(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_2(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_3(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_4(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_5(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_6(name, constant.STARTTIME, constant.ENDTIME), height=400)
-    st_echarts(options=_plot.personal_7(name, constant.STARTTIME, constant.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_1(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_2(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_3(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_4(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_5(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_6(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
+    st_echarts(options=_plot.personal_7(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
 
