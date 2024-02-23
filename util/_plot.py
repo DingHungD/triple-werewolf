@@ -449,7 +449,7 @@ def action_1(action, start_time, end_time, session_number):
         "legend": {
           "show": True,
           "data": ['參與場次', '%s王'%action if action == '自爆' else '被%s王'%action],
-          "bottom": -20,
+          "top": "2%",
   }
     }
 
