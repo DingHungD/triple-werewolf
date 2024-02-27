@@ -598,29 +598,39 @@ def personal_3(name, start_time, end_time):
             "trigger": 'axis',
             "axisPointer": {"type": 'shadow'}},
 
-        "grid": [
-            {"width": '80%',
-             "top":'10%',
-             "bottom": '3%',
-             "left": 10,
-             "containLabel": True}],
 
-        "xAxis": [{"type": "value"}],
-
-        "yAxis": [{
-            "type": "category",
-            "data": list(tmp_df.index.values),
-        }],
+        "radar": [
+            {
+              "indicator": [{ "text": i, "max": 1 } for i in tmp_df.index.values],
+              "center": ['50%', '50%'],
+              "radius": 130,
+              "axisName": {
+              "color": '#fff',
+              "backgroundColor": '#666',
+              "borderRadius": 3,
+              "padding": [3, 5]
+            }}],
 
         "series": [
-            {"data": list(tmp_df.win.values),
+            {
              "itemStyle": {"color":'#00CCCC'},
-             "name":"職業勝率",
-            #  "showBackground": True,
-             "type": "bar",
+             "type": "radar",
+             "tooltip":{"trigger":"item"},
+             "areaStyle": {"color": 'rgba(255, 228, 52, 0.6)'},
+             "data": [
+                {
+                  "value": [round(i, 3) for i in tmp_df.win.values],
+                  "name": "職業勝率",
+                  "symbol":"rect",
+                  "label":{"show":True}
+
+                }
+              ]
+
             }
         ],
     }
+
 
 
 def personal_4(name, start_time, end_time):
