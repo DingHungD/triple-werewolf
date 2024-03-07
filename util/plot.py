@@ -198,7 +198,10 @@ def personal_one(name, start_time, end_time):
 
     ax_i = 1
     tmp_df = _tmp_df.loc[:,'win'].value_counts()
-    tmp_df = tmp_df.rename(index={True:'贏', False:'輸'})
+    if False in tmp_df.index:
+        tmp_df = tmp_df.rename(index={False:'輸'})
+    if True in tmp_df.index:
+        tmp_df = tmp_df.rename(index={True:'贏'})
     explode = [0.05 for i in range(tmp_df.shape[0])]
     tmp_df.plot(kind='pie', autopct='%1.1f%%', startangle=90, pctdistance=0.7,
         explode = explode, wedgeprops=dict(width=0.7, edgecolor='w'), ax=ax[ax_i])
