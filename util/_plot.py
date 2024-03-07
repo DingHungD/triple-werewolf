@@ -585,7 +585,7 @@ def personal_2(name, start_time, end_time):
       },
       "data": [
         {
-          "value": round(tmp_df.loc['贏']/tmp_df.sum(), 4)*100
+          "value": round(tmp_df.loc['贏']/tmp_df.sum(), 4)*100 if '贏' in tmp_df.index else 0
         }
       ]}]}
 
