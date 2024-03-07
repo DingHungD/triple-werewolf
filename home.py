@@ -105,7 +105,7 @@ st.markdown(
 # body
 session_number = st.slider('玩家場數過濾', 0,
                            data.get_final_df(st.session_state.STARTTIME,
-                                             st.session_state.ENDTIME).session_number.max(),0)
+                                             st.session_state.ENDTIME).session_number.max()-1,0)
 
 
 plot.update_colormap(name = st.session_state.PLOTCOLOR)
