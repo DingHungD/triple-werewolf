@@ -507,7 +507,10 @@ def personal_2(name, start_time, end_time):
   df = data.df
   _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)].copy()
   tmp_df = _tmp_df.loc[:,'win'].value_counts()
-  tmp_df = tmp_df.rename(index={True:'贏', False:'輸'})
+  if False in tmp_df.index:
+        tmp_df = tmp_df.rename(index={False:'輸'})
+  if True in tmp_df.index:
+        tmp_df = tmp_df.rename(index={True:'贏'})
   return {
      "title": {
         "text": '獲勝率',
