@@ -23,7 +23,7 @@ update_colormap(name = 'Dark2')
 def home_one(start_time, end_time, session_number = 0):
 
     tmp_df = data.get_final_df(start_time, end_time)
-    tmp_df = tmp_df[tmp_df.session_number>session_number]
+    tmp_df = tmp_df[tmp_df.session_number=>session_number]
     tmp_df = tmp_df.sort_values('win', ascending=True)
     include_sid = data.session_df[(data.session_df.date>=start_time)&(data.session_df.date<=end_time)].sid.values
     fig, ax = plt.subplots(1, 4)
