@@ -102,7 +102,7 @@ elif st.session_state.CHARTMODE=='pyplot':
 
     # st.table(plotly.personal_2(name))
     st.title('角色操作動作')
-    st.dataframe(data.get_player_df(name), hide_index=True)
+    st.dataframe(data.get_player_df(name), hide_index=True, use_container_width = True)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -119,7 +119,7 @@ elif st.session_state.CHARTMODE=='pyplot':
         st.session_state.THETIME,
         st.session_state.THESESSION)
     st.caption("板子：%s 獲勝方：%s"%(session_info['board'], session_info['result']), unsafe_allow_html=False)
-    st.dataframe(tmp_df, hide_index=True)
+    st.dataframe(tmp_df, hide_index=True, use_container_width = True)
 
 
 
