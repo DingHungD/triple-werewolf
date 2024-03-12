@@ -52,7 +52,7 @@ if check1:
 
 # plot.update_colormap(name = constant.PLOTCOLOR)
 
-with open( "app\style.css" ) as css:
+with open( "./app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 
