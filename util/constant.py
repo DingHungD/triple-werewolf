@@ -14,6 +14,10 @@ def init_session_state():
         st.session_state.STARTTIME = (datetime.strptime(data.df.date.min(), '%Y/%m/%d').date()-timedelta(days = 1)).strftime("%Y/%m/%d")
     if 'ENDTIME' not in st.session_state:
         st.session_state.ENDTIME = data.df.date.max()
+    if 'THETIME' not in st.session_state:
+        st.session_state.THETIME = data.df.date.max()
+    if 'THESESSION' not in st.session_state:
+        st.session_state.THESESSION = 1
 
 CHARTMODE = 'pyplot'
 CHARTMODEINDEX = 0

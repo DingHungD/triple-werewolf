@@ -16,9 +16,10 @@ def reload():
     session_df = pd.read_csv(url_lst['session'])
     process_df = pd.read_csv(url_lst['process'])
 
+
     god = ['通靈師', '預言家', '女巫', '獵人', '獵魔人', '守衛', '魔術師', '黑商', '騎士', '守墓人', '攝夢人']
     villager = ['平民']
-    wolf = ['夢魘', '小狼', '黑狼王', '狼美人', '機械狼', '狼兄','血月', '石像鬼', '狼弟', '虎姑婆']
+    wolf = ['夢魘', '小狼', '黑狼王', '狼美人', '機械狼', '狼兄','血月', '石像鬼', '狼弟']
 
     df = pd.merge(role_df, user_df, on='uid')
     df = pd.merge(df, session_df, on='sid')
@@ -29,7 +30,7 @@ def reload():
     df['wolf'] = df.apply(lambda df:(df.role in wolf), axis=1)
 
     df['win'] = df.apply(lambda df:(df.wolf)==(df.result == '狼'), axis=1)
-
+    role_df = pd.merge(role_df, user_df, on='uid')
 reload()
 from datetime import datetime, timedelta
 
@@ -175,4 +176,108 @@ def get_camp_win_df(name, start_time, end_time):
         }).fillna(0)
 
     return tmp_df
+
+def get_sunburst_lst(name, start_time, end_time):
+    _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)].copy()
+    _tmp_df['camp'] = df.apply(lambda df:'神' if df.god else '民' if  df.villager else '狼', axis = 1)
+    _tmp_df['win'] = df.apply(lambda df:'贏' if df.win else '輸', axis = 1)
+    _tmp_df['total_n'] = 1
+
+    ids, labels, parents, values = [], [], [], []
+    shapes, colors = [], []
+    for camp, camp_v in _tmp_df.camp.value_counts().items():
+        if camp == '民':color = "rgba(0,102,51,1)"
+        elif camp == '神':color = "rgba(0,76,153,1)"
+        elif camp == '狼':color = "rgba(153,0,0,1)"
+        ids.append(camp)
+        labels.append(camp)
+        parents.append("")
+        values.append(camp_v)
+        shapes.append('')
+        colors.append(color)
+        role_color = 0.3
+        for role, role_v in _tmp_df[_tmp_df.camp == camp].role.value_counts().items():
+            ids.append(f"{camp} - {role}")
+            labels.append(role)
+            parents.append(camp)
+            values.append(role_v)
+            shapes.append('')
+            colors.append(color.replace(',1)', f', {role_color}'))
+            role_color+=0.075
+            for win, win_v in _tmp_df[_tmp_df.role == role].win.value_counts().items():
+                if win == '贏':win_color = "rgba(255,222,162,0.5)"
+                else:win_color = win_color = "rgba(5,5,5,0.5)"
+                ids.append(f"{role} - {win}")
+                labels.append(win)
+                parents.append(f"{camp} - {role}")
+                values.append(win_v)
+                shapes.append('/')
+                colors.append(win_color)
+
+
+    return ids, labels, parents, values, shapes, colors
+
+def get_player_df(name):
+    uid = user_df[user_df.name == name].uid.values[0]
+
+    player_df = process_df[process_df.uid == uid]
+    tmp_df = []
+    for _, items in player_df.iterrows():
+        _tmp_df = list()
+        s_df = session_df.loc[session_df['sid'] == items['sid'],
+                    ["date", "session", "board", "result"]].reset_index(drop=True)
+        s_df.rename(columns={'date':'日期', "session":'場次', 'board':'板子', 'result':'獲勝'}, inplace=True)
+        _tmp_df.append(s_df)
+
+        s_df = role_df.loc[(role_df['sid'] == items['sid'])&(role_df['uid'] == uid),
+                    ['role','set number']].reset_index(drop=True)
+        s_df.rename(columns={'role':'角色', "set number":'座位'}, inplace=True)
+        _tmp_df.append(s_df)
+
+        s_df = role_df.loc[(role_df['sid'] == items['sid'])&(role_df['uid'] == items['object']),
+                    ['name', 'role','set number']].reset_index(drop=True)
+        s_df.rename(columns={'name':'對象姓名', 'role':'對象角色', "set number":'對象座位'}, inplace=True)
+        _tmp_df.append(s_df)
+
+
+        _tmp_df = pd.concat(_tmp_df, axis = 1)
+        _tmp_df['動作'] = items['action']
+        _tmp_df['輪次'] = items['round']
+        _tmp_df = _tmp_df.loc[:, ['日期', '場次', '板子', '輪次', '角色', '座位', '動作', '對象姓名', '對象角色', '對象座位', '獲勝']]
+        tmp_df.append(_tmp_df)
+    tmp_df = pd.concat(tmp_df).reset_index(drop=True)
+
+    return tmp_df
+
+def get_allpalyer_df(date, session):
+
+    tmp_session_df = session_df[(session_df.date == date)&(session_df.session==session)].reset_index()
+    session_info = {i:v[0] for i, v in tmp_session_df.to_dict().items()}
+    tmp_process_df = process_df[process_df.sid == session_info["sid"]]
+    tmp_df = []
+    for _, items in tmp_process_df.iterrows():
+        _tmp_df = list()
+
+        s_df = role_df.loc[(role_df['sid'] == items['sid'])&(role_df['uid'] == items['uid']),
+                    ['name', 'role','set number']].reset_index(drop=True)
+        s_df.rename(columns={'name':'姓名','role':'角色', "set number":'座位'}, inplace=True)
+        _tmp_df.append(s_df)
+
+        s_df = role_df.loc[(role_df['sid'] == items['sid'])&(role_df['uid'] == items['object']),
+                    ['name', 'role','set number']].reset_index(drop=True)
+        s_df.rename(columns={'name':'對象姓名', 'role':'對象角色', "set number":'對象座位'}, inplace=True)
+        _tmp_df.append(s_df)
+
+
+        _tmp_df = pd.concat(_tmp_df, axis = 1)
+        _tmp_df['動作'] = items['action']
+        _tmp_df['輪次'] = items['round']
+        _tmp_df['動作'] = items['action']
+
+        _tmp_df = _tmp_df.loc[:, ['輪次', '姓名', '角色', '座位', '動作', '對象姓名', '對象角色', '對象座位']]
+        tmp_df.append(_tmp_df)
+
+    tmp_df = pd.concat(tmp_df).reset_index(drop=True)
+    return session_info, tmp_df
+
 
