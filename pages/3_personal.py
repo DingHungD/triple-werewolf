@@ -102,7 +102,7 @@ elif st.session_state.CHARTMODE=='pyplot':
 
     # st.table(plotly.personal_2(name))
     st.title('角色操作動作')
-    st.dataframe(plotly.personal_2(name), hide_index=True)
+    st.dataframe(data.get_player_df(name), hide_index=True)
 
     col1, col2 = st.columns(2)
     with col1:
