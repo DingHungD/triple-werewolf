@@ -132,6 +132,7 @@ elif st.session_state.CHARTMODE=='echart':
 
 
 elif st.session_state.CHARTMODE=='pyplot':
+    st.title('勝率統計')
     st.plotly_chart(plotly.home_1(st.session_state.STARTTIME, st.session_state.ENDTIME))
     st.plotly_chart(plotly.home_2(st.session_state.STARTTIME, st.session_state.ENDTIME))
     st.plotly_chart(plotly.home_3(st.session_state.STARTTIME, st.session_state.ENDTIME))

@@ -99,11 +99,18 @@ elif st.session_state.CHARTMODE=='echart':
     st_echarts(options=_plot.personal_7(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
 elif st.session_state.CHARTMODE=='pyplot':
     st.plotly_chart(plotly.personal_1(name, st.session_state.STARTTIME, st.session_state.ENDTIME))
-
+    st.title('參與場次')
+    tmp_df = data.df.loc[data.df.name ==name, ['date', 'session', 'board', 'role', 'set number', 'win']]
+    tmp_df.win = tmp_df.apply(lambda df:'贏' if df.win else '輸', axis= 1)
+    tmp_df = tmp_df.rename(columns = {'date':'日期', "session":'場次',
+                             'board':'板子', 'role':'角色',
+                             'set number':'座位','win':'獲勝'})
+    st.dataframe(tmp_df, hide_index=True, use_container_width = True)
     # st.table(plotly.personal_2(name))
     st.title('角色操作動作')
     st.dataframe(data.get_player_df(name), hide_index=True, use_container_width = True)
 
+    st.title('場次查詢')
     col1, col2 = st.columns(2)
     with col1:
         st.session_state.THETIME = st.selectbox(
@@ -113,12 +120,20 @@ elif st.session_state.CHARTMODE=='pyplot':
     with col2:
         st.session_state.THESESSION = int(st.selectbox(
             '選擇場次',
-            data.session_df[data.session_df.date == st.session_state.THETIME].session.unique()
+            sorted(data.session_df[data.session_df.date == st.session_state.THETIME].session.unique())
         ))
     session_info, tmp_df = data.get_allpalyer_df(
         st.session_state.THETIME,
         st.session_state.THESESSION)
+
+    sid = data.session_df[(data.session_df.date==st.session_state.THETIME)&
+                          (data.session_df.session==st.session_state.THESESSION)].sid.values[0]
+    role_tmp_df = data.df.loc[data.df.sid == sid, ['set number', 'name', 'role']]
+    role_tmp_df = role_tmp_df.sort_values('set number').set_index('set number').T
+
+
     st.caption("板子：%s 獲勝方：%s"%(session_info['board'], session_info['result']), unsafe_allow_html=False)
+    st.dataframe(role_tmp_df, use_container_width = True)
     st.dataframe(tmp_df, hide_index=True, use_container_width = True)
 
 

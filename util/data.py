@@ -124,20 +124,50 @@ def get_seat_df(start_time, end_time):
 def get_action_df(action, start_time, end_time):
 
     include_sid = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
-    final_df = get_final_df(start_time, end_time)
+    include_sid = list(set(include_sid)&set(process_df[process_df.action == action].sid.unique()))
 
     tmp_df = process_df[process_df.apply(lambda df:df.sid in include_sid, axis = 1)].copy()
+    role_tmp_df = role_df[role_df.apply(lambda df:df.sid in include_sid, axis = 1)].copy()
+    tmp_df = tmp_df.drop_duplicates(['sid', 'round', 'action', 'object'])
 
-    tmp_df = tmp_df.drop_duplicates(['sid', 'round', 'action'])
-    tmp_df = tmp_df[tmp_df.action == action].groupby('object')['sid'].count()
-
+    lst = []
+    for object, gb_df in tmp_df.groupby('object'):
+        lst.append({'uid':gb_df.object.values[0],
+                    'number':gb_df[gb_df.action == action].sid.nunique(),
+                    'session_number':role_tmp_df[role_tmp_df.uid == object].sid.nunique(),
+                })
+    tmp_df = pd.DataFrame(lst)
     tmp_df = pd.merge(user_df, tmp_df,
-            left_on='uid', right_on='object').copy()
-    tmp_df = tmp_df.rename(columns = {'sid':'number'})
-
-    tmp_df = pd.merge(tmp_df, final_df.loc[:, ['name','session_number']], on = 'name', how = 'left')
+            on='uid').copy()
     tmp_df['ratio'] = tmp_df.number/tmp_df.session_number
+    tmp_df = tmp_df[tmp_df.number>0]
+    tmp_df = tmp_df.sort_values('ratio',ascending=True)
 
+    return tmp_df
+
+def get_role_sum_df(board, role, start_time, end_time):
+    if board != '全部':
+        sid_lst = session_df[(session_df.date>=start_time)&
+                             (session_df.date<=end_time)&
+                             (session_df.board == board)].sid.values
+        tmp_role_df = role_df[role_df.apply(lambda df:df.sid in sid_lst, axis=1)].copy()
+    else:
+        sid_lst = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
+        tmp_role_df = role_df.copy()
+    sid_lst = list(set(sid_lst)&set(tmp_role_df[tmp_role_df.role == role].sid))
+
+    lst = []
+    for uid, gp_df in tmp_role_df.groupby('uid'):
+        tmp_gp_df = gp_df[gp_df.apply(lambda df:df.sid in sid_lst, axis=1)].copy()
+        lst.append({'uid':uid,
+                    'number':tmp_gp_df[tmp_gp_df.role == role].sid.nunique(),
+                    'session_number':tmp_gp_df.shape[0],
+                    })
+    tmp_df = pd.DataFrame(lst)
+    tmp_df = pd.merge(user_df, tmp_df,
+            on='uid').copy()
+    tmp_df['ratio'] = tmp_df.number/tmp_df.session_number
+    tmp_df = tmp_df[tmp_df.number>0]
     tmp_df = tmp_df.sort_values('ratio',ascending=True)
 
     return tmp_df
@@ -226,7 +256,7 @@ def get_player_df(name):
         _tmp_df = list()
         s_df = session_df.loc[session_df['sid'] == items['sid'],
                     ["date", "session", "board", "result"]].reset_index(drop=True)
-        s_df.rename(columns={'date':'日期', "session":'場次', 'board':'板子', 'result':'獲勝'}, inplace=True)
+        s_df.rename(columns={'date':'日期', "session":'場次', 'board':'板子', 'result':'獲勝方'}, inplace=True)
         _tmp_df.append(s_df)
 
         s_df = role_df.loc[(role_df['sid'] == items['sid'])&(role_df['uid'] == uid),
@@ -243,7 +273,7 @@ def get_player_df(name):
         _tmp_df = pd.concat(_tmp_df, axis = 1)
         _tmp_df['動作'] = items['action']
         _tmp_df['輪次'] = items['round']
-        _tmp_df = _tmp_df.loc[:, ['日期', '場次', '板子', '輪次', '角色', '座位', '動作', '對象姓名', '對象角色', '對象座位', '獲勝']]
+        _tmp_df = _tmp_df.loc[:, ['日期', '場次', '板子', '輪次', '角色', '座位', '動作', '對象姓名', '對象角色', '對象座位', '獲勝方']]
         tmp_df.append(_tmp_df)
     tmp_df = pd.concat(tmp_df).reset_index(drop=True)
 

@@ -71,16 +71,18 @@ st.session_state.ENDTIME = st.sidebar.date_input(
     datetime.strptime(st.session_state.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
-st.session_state.CHARTMODE = st.sidebar.selectbox(
-   "Select chart mode",
-   ('pyplot', 'echart', 'matplotlib'),
-   index=st.session_state.CHARTMODEINDEX)
+# st.session_state.CHARTMODE = st.sidebar.selectbox(
+#    "Select chart mode",
+#    ('pyplot', 'echart', 'matplotlib'),
+#    index=st.session_state.CHARTMODEINDEX)
 st.session_state.CHARTMODEINDEX = {'pyplot':0, 'echart':1, 'matplotlib':2}[st.session_state.CHARTMODE]
 
 # body
+action_lst = list(data.process_df.action.unique())
+action_lst.remove('自爆')
 action = st.selectbox(
         'action',
-        data.process_df.action.unique()
+        action_lst
     )
 if st.session_state.CHARTMODE!='pyplot':
     session_number = st.slider('玩家場數過濾', 0,
@@ -96,5 +98,26 @@ elif st.session_state.CHARTMODE=='echart':
 
 
 elif st.session_state.CHARTMODE=='pyplot':
+    st.title('動作統計')
     st.plotly_chart(plotly.action_1(action, st.session_state.STARTTIME, st.session_state.ENDTIME))
+
+    st.title('抽到角色統計')
+    col1, col2 = st.columns(2)
+    with col1:
+        board = st.selectbox(
+            '選擇板子',
+            ['全部']+list(data.session_df.board.unique())
+        )
+    with col2:
+        if board == '全部':
+            role_lst = data.role_df.role.unique()
+        else:
+            sid = data.session_df[data.session_df.board ==board].sid.values[0]
+            role_lst = data.role_df[data.role_df.sid == sid].role.unique()
+
+        role = st.selectbox(
+            '選擇腳色',
+            sorted(role_lst)
+        )
+    st.plotly_chart(plotly.action_2(board, role, st.session_state.STARTTIME, st.session_state.ENDTIME))
 

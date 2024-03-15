@@ -221,7 +221,8 @@ def action_1(action, start_time, end_time):
                   orientation='h', visible=False,hoverinfo ='x+y',
                   marker=dict(
                     color=colormap[0],
-                    line=dict(color=dark_color, width=1 ))),
+                    line=dict(color=dark_color, width=1 )),
+                    name='比例'),
             row=1, col=1)
 
         fig.add_trace(
@@ -229,8 +230,8 @@ def action_1(action, start_time, end_time):
                   orientation='h', visible=False,hoverinfo ='x+y',
                   marker=dict(
                     color=colormap[1],
-                    line=dict(color=dark_color, width=1)
-                  )),
+                    line=dict(color=dark_color, width=1)),
+                    name='次數'),
             row=1, col=2)
 
         fig.add_trace(
@@ -238,8 +239,8 @@ def action_1(action, start_time, end_time):
                   orientation='h', visible=False,hoverinfo ='x+y',
                   marker=dict(
                     color=colormap[2],
-                    line=dict(color=dark_color, width=1 )
-                  )),
+                    line=dict(color=dark_color, width=1 )),
+                    name='參與次數'),
             row=1, col=2)
 
     fig.data[0].visible = True
@@ -286,7 +287,7 @@ def action_1(action, start_time, end_time):
             radialaxis = dict(range=[0, 5], showticklabels=False, ticks=''),
             angularaxis = dict(showticklabels=False, ticks='')
         ),
-        showlegend=False,
+        showlegend=True,
         font=dict(
             family=font_family,
             color=dark_color,
@@ -296,6 +297,101 @@ def action_1(action, start_time, end_time):
 
     return fig
 
+
+def action_2(board, role, start_time, end_time):
+    tmp_df = data.get_role_sum_df(board, role, start_time, end_time)
+
+    fig = make_subplots(
+        rows=1, cols=2,
+        column_widths=[0.25, 0.25],
+        specs=[[{"type": "bar", "colspan": 1}, {"type": "bar", "colspan": 1}]],
+        subplot_titles=['<b>角色比例</b>',
+                        '<b>參與場次&擔任次數</b>'],
+    )
+
+    for i in range(tmp_df.session_number.max()):
+        _tmp_df = tmp_df[tmp_df.session_number>i]
+        _tmp_df = _tmp_df.sort_values('ratio', ascending=True)
+        fig.add_trace(
+            go.Bar(x = _tmp_df.ratio, y = [f'{i}' for i in _tmp_df.name],
+                  orientation='h', visible=False,hoverinfo ='x+y',
+                  marker=dict(
+                    color=colormap[0],
+                    line=dict(color=dark_color, width=1 )),
+                    name='比例'),
+            row=1, col=1)
+
+        fig.add_trace(
+            go.Bar(x = _tmp_df.number, y = [f'{i}' for i in _tmp_df.name],
+                  orientation='h', visible=False,hoverinfo ='x+y',
+                  marker=dict(
+                    color=colormap[1],
+                    line=dict(color=dark_color, width=1)),
+                    name='次數'),
+            row=1, col=2)
+
+        fig.add_trace(
+            go.Bar(x = _tmp_df.session_number, y = [f'{i}' for i in _tmp_df.name],
+                  orientation='h', visible=False,hoverinfo ='x+y',
+                  marker=dict(
+                    color=colormap[2],
+                    line=dict(color=dark_color, width=1 )),
+                    name='參與次數'),
+            row=1, col=2)
+
+    fig.data[0].visible = True
+    fig.data[1].visible = True
+    fig.data[2].visible = True
+
+    steps = []
+    for i in range(tmp_df.session_number.max()):
+        step =  dict(
+            method = 'update',
+            args = [{'visible':[False] * len(fig.data)}],
+            label=f'<b>{i}</b>',
+
+        )
+        step["args"][0]["visible"][i*3] = True
+        step['args'][0]["visible"][i*3+1] = True
+        step['args'][0]["visible"][i*3+2] = True
+
+        steps.append(step)
+
+
+
+    sliders = [dict(
+        active=0,
+        pad={"t": tmp_df.session_number.max()},
+        steps=steps,
+        currentvalue={"prefix": "<b>參與</b> ", "suffix": " <b>場次以上</b>"},
+        minorticklen = 4,
+    )]
+
+    fig.layout.sliders = sliders
+
+
+    # fig.update_layout(showlegend=False)
+    # fig.update_layout(margin = dict(t=0, l=0, r=0, b=0))
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(size=30,color=dark_color)
+
+    fig.update_layout(
+        autosize=True,
+        height=800,
+        template=None,
+        polar = dict(
+            radialaxis = dict(range=[0, 5], showticklabels=False, ticks=''),
+            angularaxis = dict(showticklabels=False, ticks='')
+        ),
+        showlegend=True,
+        font=dict(
+            family=font_family,
+            color=dark_color,
+        ),
+    )
+    fig.update_yaxes(showline=True, linewidth=2, linecolor=dark_color, gridcolor=light_color)
+
+    return fig
 
 def personal_1(name, start_time, end_time):
     ids, labels, parents, values, shapes, colors = data.get_sunburst_lst(name, start_time, end_time)
@@ -307,7 +403,7 @@ def personal_1(name, start_time, end_time):
         branchvalues="total",
         textinfo='label+percent entry',
         marker=dict(colors=colors,
-                    line=dict(color=light_color),
+                    line=dict(color='#404040'),
                     pattern=dict(shape=shapes, solidity=0.9),
                     ),
         hoverlabel=dict(font=dict(family=font_family)),
