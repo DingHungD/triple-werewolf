@@ -18,6 +18,8 @@ def init_session_state():
         st.session_state.THETIME = data.df.date.max()
     if 'THESESSION' not in st.session_state:
         st.session_state.THESESSION = 1
+    if 'THEROUND' not in st.session_state:
+        st.session_state.THEROUND = 1
 
 CHARTMODE = 'pyplot'
 CHARTMODEINDEX = 0

@@ -1,6 +1,7 @@
 import pandas as pd
 from util import data
 import plotly.graph_objects as go
+import math
 from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
@@ -450,5 +451,70 @@ def personal_2(name):
     tmp_df = tmp_df.hide_index()
 
     return tmp_df
+
+def personal_3(tmp_df, sid, round_n):
+
+    info_df = data.df.loc[data.df.sid == sid, ['role', 'set number', 'name', 'wolf']]
+    role_colormap = {v:colormap[i]for i, v in enumerate(info_df.role.unique())}
+    line_l = 10
+
+    step = math.pi/info_df.shape[0]*2
+    # 创建有向图
+    fig = go.Figure()
+    death_seat = list()
+    # 添加节点
+    tmp_items = {'x':[],'y':[], 'line_color':[], 'text':[], 'textfont':[], 'textposition':[]}
+    for _, item in tmp_df[tmp_df['輪次']<=round_n].iterrows():
+        if item['動作'] == '死亡':
+            death_seat.append(item['對象座位'])
+
+
+    for _, item in info_df.iterrows():
+        fig.add_trace(go.Scatter(x=[math.cos(item['set number']*step)*line_l],
+                                y=[math.sin(item['set number']*step)*line_l],
+                                mode='markers+text',
+                                marker_symbol='circle',
+                                marker_color=role_colormap[item['role']] ,
+                                marker_line_width=2,
+                                marker_size=50,
+                                textfont={"size": [15]},
+                                text=["<b>座號</b>：%s<br><b>玩家</b>：%s<br><b>角色</b>：%s<br>"%(
+                                    item['set number'], item['name'], item['role'])],
+                                textposition=['bottom center'],
+                                hoverinfo ='text'))
+
+    for i in death_seat:
+        fig.add_trace(go.Scatter(x=[math.cos(i*step)*line_l],
+                                y=[math.sin(i*step)*line_l],
+                            mode="markers",
+                            marker= dict(symbol= "x"),
+                                marker_color="red",
+                            marker_size=40,
+                            ))
+    for _, item in tmp_df[tmp_df['輪次']==round_n].iterrows():
+        if np.isnan(item['座位']):continue
+        fig.add_trace(go.Scatter(x=[math.cos(item['座位']*step)*line_l,
+                                    math.cos(item['對象座位']*step)*line_l],
+                                y=[math.sin(item['座位']*step)*line_l,
+                                    math.sin(item['對象座位']*step)*line_l],
+                            mode="lines+markers+text",
+                            marker= dict(size=20,symbol= "arrow", angleref="previous"),
+
+                            line=dict(color=role_colormap[item['角色']], width=5),
+                            textfont={"size": [22]},
+                            text=["<b>%s</b>"%(item['動作'])],
+                            textposition=["middle right"]
+                            ))
+    # fig.update_traces(textposition='top center')
+    fig.update_layout(
+        autosize=True,
+        height=800,
+        showlegend=False,
+        font=dict(
+            family='./TaipeiSansTCBeta-Regular.ttf'),
+        yaxis={'visible': False, 'showticklabels': False, 'range':[-15, 12]},
+        xaxis={'visible': False, 'showticklabels': False, 'range':[-13, 13]}
+    )
+    return fig
 
 

@@ -107,11 +107,11 @@ elif st.session_state.CHARTMODE=='pyplot':
                              'set number':'座位','win':'獲勝'})
     st.dataframe(tmp_df, hide_index=True, use_container_width = True)
     # st.table(plotly.personal_2(name))
-    st.title('角色操作動作')
-    st.dataframe(data.get_player_df(name), hide_index=True, use_container_width = True)
+    # st.title('角色操作動作')
+    # st.dataframe(data.get_player_df(name), hide_index=True, use_container_width = True)
 
     st.title('場次查詢')
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.session_state.THETIME = st.selectbox(
             '選擇時間',
@@ -122,10 +122,15 @@ elif st.session_state.CHARTMODE=='pyplot':
             '選擇場次',
             sorted(data.session_df[data.session_df.date == st.session_state.THETIME].session.unique())
         ))
+
     session_info, tmp_df = data.get_allpalyer_df(
         st.session_state.THETIME,
         st.session_state.THESESSION)
-
+    with col3:
+        st.session_state.THEROUND = int(st.selectbox(
+            '選擇輪次',
+            sorted(tmp_df['輪次'].unique())
+        ))
     sid = data.session_df[(data.session_df.date==st.session_state.THETIME)&
                           (data.session_df.session==st.session_state.THESESSION)].sid.values[0]
     role_tmp_df = data.df.loc[data.df.sid == sid, ['set number', 'name', 'role']]
@@ -133,8 +138,10 @@ elif st.session_state.CHARTMODE=='pyplot':
 
 
     st.caption("板子：%s 獲勝方：%s"%(session_info['board'], session_info['result']), unsafe_allow_html=False)
+
+    st.plotly_chart(plotly.personal_3(tmp_df, session_info['sid'], st.session_state.THEROUND))
     st.dataframe(role_tmp_df, use_container_width = True)
-    st.dataframe(tmp_df, hide_index=True, use_container_width = True)
+    st.dataframe(tmp_df[tmp_df['輪次']==st.session_state.THEROUND], hide_index=True, use_container_width = True)
 
 
 
