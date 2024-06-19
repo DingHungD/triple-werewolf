@@ -46,6 +46,7 @@ st.session_state.CHARTMODEINDEX = {'pyplot':0, 'echart':1, 'matplotlib':2}[st.se
 # st.session_state.PLOTCOLORINDEX = {v:i for i, v in enumerate(PLOTCOLOR_lst)}[st.session_state.PLOTCOLOR]
 
 sideb = st.sidebar
+st.session_state.PUBLIC = sideb.checkbox('public', value=st.session_state.PUBLIC)
 check1 = sideb.button("reload data")
 if check1:
     data.reload()
@@ -133,8 +134,8 @@ elif st.session_state.CHARTMODE=='echart':
 
 elif st.session_state.CHARTMODE=='pyplot':
     st.title('勝率統計')
-    st.plotly_chart(plotly.home_1(st.session_state.STARTTIME, st.session_state.ENDTIME))
-    st.plotly_chart(plotly.home_2(st.session_state.STARTTIME, st.session_state.ENDTIME))
-    st.plotly_chart(plotly.home_3(st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st.plotly_chart(plotly.home_1(st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
+    st.plotly_chart(plotly.home_2(st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
+    st.plotly_chart(plotly.home_3(st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
 
 

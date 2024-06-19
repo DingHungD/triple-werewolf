@@ -14,8 +14,8 @@ dark_color = '#555555'
 light_color = '#E9E9E9'
 font_family = './TaipeiSansTCBeta-Regular.ttf'
 
-def home_1(start_time, end_time):
-    tmp_df = data.get_final_df(start_time, end_time)
+def home_1(start_time, end_time, public):
+    tmp_df = data.get_final_df(start_time, end_time, public)
     tmp_df = tmp_df.sort_values('win', ascending=True)
 
 
@@ -103,7 +103,7 @@ def home_1(start_time, end_time):
     return fig
 
 
-def home_2(start_time, end_time):
+def home_2(start_time, end_time, public):
     fig = make_subplots(
         rows=2, cols=2,
         column_widths=[0.5, 0.5],
@@ -113,7 +113,7 @@ def home_2(start_time, end_time):
         subplot_titles=['<b>板子統計</b>', '<b>日期&勝負統計</b>', '<b>總勝負比</b>']
     )
 
-    tmp_df = data.get_board_proportion_df(start_time, end_time)
+    tmp_df = data.get_board_proportion_df(start_time, end_time, public)
     fig.add_trace(
             go.Pie(labels=tmp_df.index,
                                 values=tmp_df.sid,
@@ -122,7 +122,7 @@ def home_2(start_time, end_time):
             row=1, col=1)
 
 
-    tmp_df = data.get_win_sum_df(start_time, end_time)
+    tmp_df = data.get_win_sum_df(start_time, end_time, public)
     fig.add_trace(
             go.Bar(x = tmp_df.index, y = tmp_df['好'], marker_color = colormap[0],hoverinfo ='x+y',
                   marker_line_color=dark_color,marker_line_width=1),
@@ -133,7 +133,7 @@ def home_2(start_time, end_time):
                   marker_line_color=dark_color,marker_line_width=1),
             row=1, col=2,
         )
-    tmp_df = data.get_win_proportion_df(start_time, end_time)
+    tmp_df = data.get_win_proportion_df(start_time, end_time, public)
 
     fig.add_trace(
             go.Pie(labels=tmp_df.index,
@@ -158,9 +158,9 @@ def home_2(start_time, end_time):
     return fig
 
 
-def home_3(start_time, end_time):
+def home_3(start_time, end_time, public):
 
-    tmp_df = data.get_seat_df(start_time, end_time).T
+    tmp_df = data.get_seat_df(start_time, end_time, public).T
     tmp_df = pd.concat([tmp_df, tmp_df.iloc[[0], :]])
     theta = ['%s號'%i for i in tmp_df.index]
     fig = make_subplots(rows=1, cols=3, specs=[[{'type': 'polar'}]*3],
@@ -203,8 +203,8 @@ def home_3(start_time, end_time):
     return fig
 
 
-def action_1(action, start_time, end_time):
-    tmp_df = data.get_action_df(action, start_time, end_time)
+def action_1(action, start_time, end_time, public):
+    tmp_df = data.get_action_df(action, start_time, end_time, public)
 
     fig = make_subplots(
         rows=1, cols=2,
@@ -299,8 +299,8 @@ def action_1(action, start_time, end_time):
     return fig
 
 
-def action_2(board, role, start_time, end_time):
-    tmp_df = data.get_role_sum_df(board, role, start_time, end_time)
+def action_2(board, role, start_time, end_time, public):
+    tmp_df = data.get_role_sum_df(board, role, start_time, end_time, public)
 
     fig = make_subplots(
         rows=1, cols=2,
@@ -394,8 +394,8 @@ def action_2(board, role, start_time, end_time):
 
     return fig
 
-def personal_1(name, start_time, end_time):
-    ids, labels, parents, values, shapes, colors = data.get_sunburst_lst(name, start_time, end_time)
+def personal_1(name, start_time, end_time, public):
+    ids, labels, parents, values, shapes, colors = data.get_sunburst_lst(name, start_time, end_time, public)
     fig =go.Figure(go.Sunburst(
         ids=ids,
         labels=labels,

@@ -71,6 +71,9 @@ st.session_state.ENDTIME = st.sidebar.date_input(
     datetime.strptime(st.session_state.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
+sideb = st.sidebar
+st.session_state.PUBLIC = sideb.checkbox('public', value=st.session_state.PUBLIC)
+
 # st.session_state.CHARTMODE = st.sidebar.selectbox(
 #    "Select chart mode",
 #    ('pyplot', 'echart', 'matplotlib'),
@@ -87,7 +90,7 @@ action = st.selectbox(
 if st.session_state.CHARTMODE!='pyplot':
     session_number = st.slider('玩家場數過濾', 0,
                             data.get_final_df(st.session_state.STARTTIME,
-                                                st.session_state.ENDTIME).session_number.max(),0)
+                                                st.session_state.ENDTIME, st.session_state.PUBLIC).session_number.max(),0)
 
 
 if st.session_state.CHARTMODE=='matplotlib':
@@ -99,7 +102,7 @@ elif st.session_state.CHARTMODE=='echart':
 
 elif st.session_state.CHARTMODE=='pyplot':
     st.title('動作統計')
-    st.plotly_chart(plotly.action_1(action, st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st.plotly_chart(plotly.action_1(action, st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
 
     st.title('抽到角色統計')
     col1, col2 = st.columns(2)
@@ -119,5 +122,5 @@ elif st.session_state.CHARTMODE=='pyplot':
             '選擇腳色',
             sorted(role_lst)
         )
-    st.plotly_chart(plotly.action_2(board, role, st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st.plotly_chart(plotly.action_2(board, role, st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
 

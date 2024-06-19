@@ -75,6 +75,8 @@ st.session_state.ENDTIME = st.sidebar.date_input(
     datetime.strptime(st.session_state.ENDTIME, '%Y/%m/%d').date()
 ).strftime("%Y/%m/%d")
 
+sideb = st.sidebar
+st.session_state.PUBLIC = sideb.checkbox('public', value=st.session_state.PUBLIC)
 
 # st.session_state.CHARTMODE = st.sidebar.selectbox(
 #    "Select chart mode",
@@ -98,7 +100,7 @@ elif st.session_state.CHARTMODE=='echart':
     st_echarts(options=_plot.personal_6(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
     st_echarts(options=_plot.personal_7(name, st.session_state.STARTTIME, st.session_state.ENDTIME), height=400)
 elif st.session_state.CHARTMODE=='pyplot':
-    st.plotly_chart(plotly.personal_1(name, st.session_state.STARTTIME, st.session_state.ENDTIME))
+    st.plotly_chart(plotly.personal_1(name, st.session_state.STARTTIME, st.session_state.ENDTIME, st.session_state.PUBLIC))
     st.title('參與場次')
     tmp_df = data.df.loc[data.df.name ==name, ['date', 'session', 'board', 'role', 'set number', 'win']]
     tmp_df.win = tmp_df.apply(lambda df:'贏' if df.win else '輸', axis= 1)
@@ -141,7 +143,7 @@ elif st.session_state.CHARTMODE=='pyplot':
 
     st.plotly_chart(plotly.personal_3(tmp_df, session_info['sid'], st.session_state.THEROUND))
     st.dataframe(role_tmp_df, use_container_width = True)
-    st.dataframe(tmp_df[tmp_df['輪次']==st.session_state.THEROUND], hide_index=True, use_container_width = True)
+    st.dataframe(tmp_df[tmp_df['輪次']==st.session_state.THEROUND], use_container_width = True)
 
 
 

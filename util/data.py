@@ -35,9 +35,14 @@ reload()
 from datetime import datetime, timedelta
 
 
-def get_final_df(start_time, end_time):
-
-    include_sid = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
+def get_final_df(start_time, end_time, public):
+    if public:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)&(
+                session_df.public == 'public')].sid.values
+    else:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)].sid.values
 
     tmp_df = df[df.apply(lambda df:df.sid in include_sid, axis = 1)]
 
@@ -81,8 +86,14 @@ def get_final_df(start_time, end_time):
     return final_df
 
 
-def get_board_proportion_df(start_time, end_time):
-    _tmp_df = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].copy()
+def get_board_proportion_df(start_time, end_time, public):
+    if public:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)&(
+                    session_df.public == 'public')].copy()
+    else:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)].copy()
 
     column = 'board'
     tmp_df = _tmp_df.groupby(column).count()[['sid']]
@@ -90,16 +101,28 @@ def get_board_proportion_df(start_time, end_time):
 
     return tmp_df
 
-def get_win_proportion_df(start_time, end_time):
-    _tmp_df = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].copy()
+def get_win_proportion_df(start_time, end_time, public):
+    if public:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)&(
+                    session_df.public == 'public')].copy()
+    else:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)].copy()
 
     column = 'result'
     tmp_df = _tmp_df.groupby(column).count()[['sid']]
 
     return tmp_df
 
-def get_win_sum_df(start_time, end_time):
-    _tmp_df = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].copy()
+def get_win_sum_df(start_time, end_time, public):
+    if public:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)&(
+                    session_df.public == 'public')].copy()
+    else:
+        _tmp_df = session_df[(session_df.date>=start_time)&(
+                    session_df.date<=end_time)].copy()
 
     tmp_df = {}
 
@@ -110,8 +133,14 @@ def get_win_sum_df(start_time, end_time):
 
     return tmp_df
 
-def get_seat_df(start_time, end_time):
-    include_sid = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
+def get_seat_df(start_time, end_time, public):
+    if public:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)&(
+                session_df.public == 'public')].sid.values
+    else:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)].sid.values
     _tmp_df = df[df.apply(lambda df:df.sid in include_sid, axis = 1)].copy()
     tmp_df = {}
     for n, item in _tmp_df.groupby('set number'):
@@ -121,9 +150,14 @@ def get_seat_df(start_time, end_time):
 
     return tmp_df
 
-def get_action_df(action, start_time, end_time):
-
-    include_sid = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
+def get_action_df(action, start_time, end_time, public):
+    if public:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)&(
+                session_df.public == 'public')].sid.values
+    else:
+        include_sid = session_df[(session_df.date>=start_time)&(
+                session_df.date<=end_time)].sid.values
     include_sid = list(set(include_sid)&set(process_df[process_df.action == action].sid.unique()))
 
     tmp_df = process_df[process_df.apply(lambda df:df.sid in include_sid, axis = 1)].copy()
@@ -145,14 +179,26 @@ def get_action_df(action, start_time, end_time):
 
     return tmp_df
 
-def get_role_sum_df(board, role, start_time, end_time):
+def get_role_sum_df(board, role, start_time, end_time, public):
     if board != '全部':
-        sid_lst = session_df[(session_df.date>=start_time)&
-                             (session_df.date<=end_time)&
-                             (session_df.board == board)].sid.values
+        if public:
+            sid_lst = session_df[(session_df.date>=start_time)&
+                                (session_df.date<=end_time)&
+                                (session_df.board == board)&
+                                (session_df.public == 'public')].sid.values
+        else:
+            sid_lst = session_df[(session_df.date>=start_time)&
+                                (session_df.date<=end_time)&
+                                (session_df.board == board)].sid.values
         tmp_role_df = role_df[role_df.apply(lambda df:df.sid in sid_lst, axis=1)].copy()
     else:
-        sid_lst = session_df[(session_df.date>=start_time)&(session_df.date<=end_time)].sid.values
+        if public:
+            sid_lst = session_df[(session_df.date>=start_time)&
+                                 (session_df.date<=end_time)&
+                                 (session_df.public == 'public')].sid.values
+        else:
+            sid_lst = session_df[(session_df.date>=start_time)&
+                                 (session_df.date<=end_time)].sid.values
         tmp_role_df = role_df.copy()
     sid_lst = list(set(sid_lst)&set(tmp_role_df[tmp_role_df.role == role].sid))
 
@@ -207,8 +253,11 @@ def get_camp_win_df(name, start_time, end_time):
 
     return tmp_df
 
-def get_sunburst_lst(name, start_time, end_time):
-    _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)].copy()
+def get_sunburst_lst(name, start_time, end_time, public):
+    if public:
+        _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)&(df.public == 'public')].copy()
+    else:
+        _tmp_df = df[(df.name == name)&(df.date>=start_time)&(df.date<=end_time)].copy()
     _tmp_df['camp'] = df.apply(lambda df:'神' if df.god else '民' if  df.villager else '狼', axis = 1)
     _tmp_df['win'] = df.apply(lambda df:'贏' if df.win else '輸', axis = 1)
     _tmp_df['total_n'] = 1

@@ -20,6 +20,8 @@ def init_session_state():
         st.session_state.THESESSION = 1
     if 'THEROUND' not in st.session_state:
         st.session_state.THEROUND = 1
+    if 'PUBLIC' not in st.session_state:
+        st.session_state.PUBLIC = False
 
 CHARTMODE = 'pyplot'
 CHARTMODEINDEX = 0
