@@ -107,7 +107,7 @@ elif st.session_state.CHARTMODE=='pyplot':
     tmp_df = tmp_df.rename(columns = {'date':'日期', "session":'場次',
                              'board':'板子', 'role':'角色',
                              'set number':'座位','win':'獲勝'})
-    st.dataframe(tmp_df, hide_index=True, use_container_width = True)
+    st.dataframe(tmp_df, use_container_width = True)
     # st.table(plotly.personal_2(name))
     # st.title('角色操作動作')
     # st.dataframe(data.get_player_df(name), hide_index=True, use_container_width = True)
